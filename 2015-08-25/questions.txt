@@ -10,14 +10,28 @@ after which the instructor gets to gather and sum the row counts.
 
 In practice, this took X time.  This includes
 
- - Time to start the process
- - Time to compute row counts
- - Time for the instructor to gather counts
- - Time for instructor to do the arithmetic
+A: Ideally assume there are N rows, each row has M students. Then
+Total student number = M * N. Each student takes t_i time to count. 
+Time to gather one row is t_g. Time to do one addition and assignment
+is t_a.
+
+Then
+ - Time to start the process = t_s
+ - Time to compute row counts = t_i * M
+ - Time for the instructor to gather counts = t_g * N
+ - Time for instructor to do the arithmetic = t_a * N
 
 Consider the following questions:
 
 1. What is a simple model that would predict this time?
+A: t_1 = t_s + t_i * M + t_g * N + t_a * N
+
 2. What about a simple model to predict time for one person to count?
+A: Then
+the total time for one person would be 
+   t_2 = t_i * M * N
+
 3. How big should the class be before the parallel method takes less time?
+A: Asking t_1 <= t_2 is equivalent to 
+   t_s + t_i * M + t_g * N + t_a * N <= t_i * M * N
 
