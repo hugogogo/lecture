@@ -21,22 +21,38 @@ something into an already-full cache.
 1. Suppose 16N is significantly larger than the size of our L3 cache. What is
 the memory-based AI of this code? (Hint: What is the memory-based AI of just the
 innermost loop?)
+A: AI = 1 (Flops/double transfered) or 1/8 (Flops/byte transfered)
+By looking at the innermost loop, everytime the cache is refreshed so 2 doubles 
+are transferred between memory and cache, and there are 2 Flops involved
+(1 multiplication and 1 addition)
 
 
 2. Now suppose that the cache is substantially larger than 16N, but
 substantially smaller than 8N^2. What is the AI now?
+A: AI = 2 (Flops/double transfered) or 1/4 (Flops/byte transfered)
+By reusing each row of A, every innermost loop reads in just one column of B.
+So everytime there are 1 double transferred and there are 2 Flops involved
+(1 multiplication and 1 addition)
 
 
 3. Now suppose the cache is large enough to hold all of A, B, and C. What is the
 AI now? (Hint: Writing to a byte of memory not already in the cache incurs two
 memory transfers: one to move the data to the cache for writing, and one to move
 the written data back to main memory.)
+A: AI = N (Flops/double transfered) or N/8 (Flops/byte transfered)
+Since the cache can hold all A, B, and C, the total Flops = 2N^3 (Without 
+considering algorithms like Strassen's). 
+The total double that memory-cache transfer = 2N^2
 
 
 4. Cache overflowing. On my CPU (Intel i7-4700 HQ), L1, L2, and L3 caches are 32
 KB, 256 KB, and 6 MB respectively. What is the largest problem size N that will
 fit in each cache? What is the arithmetic intensity associated with each problem
 size?
+A: Just consider fitting into L3 caches of 6 MB size. (1). To have the case in part 3, 
+3(if we want to put all A, B, C into cache) or 2(if we just put A and B into cache)
+of 1(Just put B into cache)* N^2 * 8 <= 6*10^6.
+(2). To have the case in part 2, we need 16N <= 6*10^6
 
 
 5. My CPU has 4 cores, each of which can do 8 fused multiply-adds per cycle, has
