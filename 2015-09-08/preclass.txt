@@ -58,9 +58,14 @@ of 1(Just put B into cache)* N^2 * 8 <= 6*10^6.
 5. My CPU has 4 cores, each of which can do 8 fused multiply-adds per cycle, has
 a clock rate of 2.4 GHz, and a memory bandwidth of 25.6 GB/s. At what arithmetic
 intensity does my machine become CPU-bound?
+A:	2 Flops/FMA * 8 FMA/cycle * 2.4cycle/s/core * 4 cores = 153.6 Gflops/s
+	AI = Gflops/s / memory bandwidth = 153.6 / 25.6 = 6
 
 
 6. So, for what size range for N will naive matmul be CPU-bound on my machine?
-
+A: 	memory bound when N / 16 <= 6
+	Otherwise, CPU-bound
 
 7. So, what will a plot of Flops/sec vs N look like?
+A: 	Gflops/sec = N / 16 * 25.6  for N <= 96
+			   = 153.6			for N >  96
