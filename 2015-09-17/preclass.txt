@@ -24,7 +24,13 @@ that you can figure out the numerical jargon.
     
       void sparse_multiply(csr_t* A, double* x, double* result)
       {
-          /* Fill in here */
+		for (int i = 0; i < A->n; i++){
+		 	double tmp = 0;
+			for (int k = A->ptr[i]; k < A->ptr[i+1]; k++){
+			  	tmp += A->pr[k] * x[A->col[k]];
+			  } 
+			result[i] = tmp;
+		  }
       } 
 
 3.  From the slides, complete the following short code:
@@ -32,7 +38,7 @@ that you can figure out the numerical jargon.
       double laplacian_u(double (*u)(double x, double y),
                          double h, double x, double y)
       {
-          /* Estimate the Laplacian applied to u at (x,y) */
+		return (4*u(x,y) - u(x-h,y) - u(x+h,y) - u(y,x-h) - u(y,x+h))/(h*h);
       }
 
     If you are unfamiliar with the syntax, the first argument to
@@ -61,3 +67,18 @@ that you can figure out the numerical jargon.
     several steps without communicating, can you describe how to
     similarly advance this scheme?  Are there any advantages to such
     an organization if there is only one core available?
+
+A:	The idea is same as life of game, where we store the data with k copy of
+	boundary data to update a small region for several times without 
+	synchronization. Even without parallelism, we can get cache locality since
+	every update stays in the same block without referencing other blocks.
+
+	Suppose we divide the data into B^2 blocks with k layers of boundary data.
+	Then the total cost of updating k steps would be
+		( B + 2 (k-1) )^2 * k
+	compared to the normal
+		B^2 * k
+	The overhead is small in the scaling where k << B. 
+
+	The adavantage is the increase of arithmetic intensity from 1 cell update/
+	memory bandwidth to k cell updates/memory bandwidth.
