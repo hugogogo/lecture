@@ -150,10 +150,18 @@ void workq_wait(workq_t* workq)
  */
 void workq_put(workq_t* workq, void* data)
 {
-    task_t* task = (task_t*) malloc(sizeof(task_t));
-    task->data = data;
-    task->next = workq->tasks;
-    workq->tasks = task;
+  pthread_mutex_lock(workq->lock);
+
+  if (!work1->tasks) {
+	pthread_cond_signal(workq->cv);
+  }
+
+  task_t* task = (task_t*) malloc(sizeof(task_t));
+  task->data = data;
+  task->next = workq->tasks;
+  workq->tasks = task;
+
+  pthread_mutx_unlock(workq->lock);
 }
 
 
@@ -164,14 +172,23 @@ void workq_put(workq_t* workq, void* data)
  */
 void* workq_get(workq_t* workq)
 {
-    void* result = NULL;
-    if (workq->tasks) {
-        task_t* task = workq->tasks;
-        result = task->data;
-        workq->tasks = task->next;
-        free(task);
-    }
-    return result;
+  void* result = NULL;
+
+  pthread_mutex_lock(workq->lock);
+
+  if (workq->tasks) {
+	task_t* task = workq->tasks;
+	result = task->data;
+	workq->tasks = task->next;
+	free(task);
+  }
+  else {
+	pthread_cond_wait(workq->cv, workq->lock);
+  }
+
+  pthread_mutex_unlock(workq->lock);
+
+  return result;
 }
 
 
@@ -183,7 +200,11 @@ void* workq_get(workq_t* workq)
  */
 void workq_finish(workq_t* workq)
 {
-    workq->done = 1;
+  pthread_mutex_lock(workq->lock);
+
+  workq->done = 1;
+
+  pthread_mutex_unlock(workq->lock);
 }
 
 
