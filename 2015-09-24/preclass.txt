@@ -14,12 +14,38 @@
        counters in the critical section (t_update).
 	
 	A:	computation = N * t_trial / p
-		communication = t_update 
-		total = computation + communication = N * t_trial / p + t_update 
+		communication = N * t_update / B
+		total = computation + communication = N * t_trial / p + N * t_update / B
 
     b) Run the code with a few different parameter values in order
        to estimate N, t_trial, and t_update for this code on
        a totient compute node.
+	
+	A: 
+		--- Run input parameters:
+		rtol:      1.000000e-04
+		maxtrials: 10000000
+		nbatch:    1000
+		0.499942 (9.12692e-05) from 10001000 trials
+		1 threads (OpenMP): 6.978798e-02 s
+		--- Run input parameters:
+		rtol:      1.000000e-04
+		maxtrials: 10000000
+		nbatch:    2000
+		0.499942 (9.12645e-05) from 10002000 trials
+		1 threads (OpenMP): 6.977797e-02 s
+
+		From the results above,
+		N = 10^7
+		p = 1
+		B = 1000 / 2000
+
+		By a), 
+			10^7 t_trial + 10^ 7 t_update / 1000 = 6.979 * 10^(-2) s
+			10^7 t_trial + 10^ 7 t_update / 2000 = 6.978 * 10^(-2) s
+			which implies
+			t_trial  = 6.946 * 10^(-9) s
+			t_update = 3.234 * 10^(-8) s
 
     c) Based on your model, suggest a strategy for choosing the batch
        size.  How might you generalize this strategy to automatically
@@ -35,3 +61,6 @@
     performance and correctness) in OpenMP codes.  Go through the
     checklist in the paper for omp_mc.c.  What performance mistakes
     are there in the demonstration implementation?
+
+	A:	With large batch size, there is very little work in the critical 
+	section. Atomic would be sufficient here.
