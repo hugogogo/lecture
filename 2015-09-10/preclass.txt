@@ -3,12 +3,39 @@
    host cores are used, for the moment).  How do things change with
    the addition of the two Phi boards?
 
+A:	For only host core:	
+	peak flop rate = 16 flops/cycle * 12 cores * 2.4 GHz = 460.8 Gflop/s
+    max memory bandwidth = 59 GB/s
+	operational intensity at ridge point = 460.8 Gflops/s / 59 GB/s = 7.81 flops/B	
+
+	Roofline Diagram is piecewise-linear: Let OI = operational intensity
+	Attainable Flop rate = OI * 59 GB/s		if OI <  7.81 flops/B
+						 = 460.8 Gflops/s	if OI >= 7.81 flops/B
+	
+	For host core + 2 Phi boards:
+	peak flop rate = 16 flops/cycle * 12 cores * 2.4 GHz + 
+					 16 flops/cycle * 2 boards * 60 cores * 1.053 GHz
+                   = 2482.56 Gflops/s
+	max memory bandwidth = 59 GB/s + 2 * 320 GB/s = 699 GB/s
+	OI at ridge point = 2482.56 Gflop/s / 699 GB/s = 3.55 flops/B
+
+    roofline diagram:
+    Attainable flop rate = OI * 699 		if OI <  3.55 flops/B
+                         = 2482.56          if OI >= 3.55 flops/B
+
 2. What is the difference between two cores and one core with
    hyperthreading?
+
+A:	One core with hyperthreading can share execution resource. It is more like
+	an issue of scheduling. Two physical cores, on the other hands, can achieve
+	true parallelism.
 
 3. Do a Google search to find a picture of how memories are arranged
    on the Phi architecture.  Describe the setup briefly in your own
    words.  Is the memory access uniform or non-uniform?
+
+A: The memory access is nonuniform, because the cores at the edges and corners
+   have fewer communication channels and hence less bandwidth available.	
 
 4. Consider the parallel dot product implementations suggested in the
    slides.  As a function of the number of processors, the size of the
@@ -17,3 +44,11 @@
    [Note that dot products have low arithmetic intensity -- the
     roofline model may be useful for reasoning about the peak
     performance for computing pieces of the dot product]
+
+A:	Suppose there are p processors, size of vectors is n and typical time
+	to send a message is t.	Suppose a single arithmetic operation takes time k.
+	Then serial time:
+		T_s = 2 * n * k
+	Parallel time:
+		T_p = 2 * n * k / p + p * t
+	Speed up = T_s / T_p
