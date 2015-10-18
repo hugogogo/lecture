@@ -1,7 +1,12 @@
 0.  How much time did you spend on this pre-class exercise, and when?
 
+A:	1 hour.
+	Oct 18th. Trying to catch up what is going on.
+
 1.  What are one or two points that you found least clear in the
     10/08 slide decks (including the narration)?
+
+A:	Overlap communication and computation
 
 2.  Now that we are now basically a third of the way into the
     semester, and are (mostly) settled into the steady pace of things,
@@ -10,6 +15,9 @@
     particularly useful -- venting about the cluster, for example, is
     understandable but doesn't help me that much in adjusting!
 
+A:	I would appreciate more narrative materials. Slides are to concise to 
+	be understood.
+
 3.  The ring demo implements the protocol described in the particle
     systems slide deck from 9/15:
 
@@ -17,9 +25,15 @@
 
     a) In your own words, describe what ring.c is doing.
 
+	A:	It is sending data by receiving from previous data to the next one.
+		Each time the result stores the absolute interaction (absolute difference)
+		between two buffers.
+
     b) How might you modify the code to have the same computational
        pattern, but using non-blocking communication rather than
        MPI_Sendrecv?  Note that according to the MPI standard,
        one isn't supposed to read from a buffer that is being
        handled by a non-blocking send, so it is probably necessary
        to use three temporary buffers rather than the current two.
+
+	A:	Avoid swapping current and received buffer.
