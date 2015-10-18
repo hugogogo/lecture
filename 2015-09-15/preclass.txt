@@ -5,14 +5,25 @@ the glider pattern for a few generations.
 
 0.  How much time did you spend on this pre-class exercise, and when?
 
+A:	
+
 1.  What are one or two points that you found least clear in the
     9/15 slide decks (including the narration)?
+
+A:	Particle system
 
 2.  In the basic implementation provided, what size board for the Game
     of Life would fit in L3 cache for one of the totient nodes?  Add a
     timer to the code and run on the totient node.  How many cells per
     second can we update for a board that fits in L3 cache?  For a
     board that does not fit?
+
+A:	In the basic.c, a cell is represented by 1 byte = 8 bit. Since L3 cache
+	is 15 M = 15 * 2^20 bytes. So a L3 cache can take around 3965 cells.
+	The number of cells/second that can be updated for a board that
+	fits in L3 cache and does not fit in L3 cache is approximately equal.
+	This is because the operational intensity for this implementation is 
+	very low so that cache usage does not make a big difference.
 
 3.  Assuming that we want to advance time by several generations,
     suggest a blocking strategy that would improve the operational
@@ -21,10 +32,18 @@ the glider pattern for a few generations.
     want to try your hand at implementing your strategy (though you
     need not spend too much time on it).
 
+A:	We can divide the board into disjoint blocks. For each block we can
+	store it with k layers of ghost cells. The advantage is that we can
+	update each block for k generations without synchronization.
+
 4.  Comment on what would be required to parallelize this code
     according to the domain decomposition strategy outlined in the
     slides.  Do you think you would see good speedups on one of
     the totient nodes?  Why or why not?
+
+A:	Update of each block should be done before any synchronization. However,
+	I think there should be no good speedup since the operational intensity
+	is still very very low. An idea to improve this is by using vectorization.
 
 5.  Suppose we want to compute long-range interactions between two
     sets of particles in parallel using the obvious n^2 algorithm in a
@@ -49,3 +68,11 @@ the glider pattern for a few generations.
     Based on what you know about memories and parallel architecture,
     do you see any features of this approach that are likely to lead
     to poor performance?
+
+A:	It is inefficient to put particle coordinate (x,y) and force counter (fx,fy) 
+	in the same place. This is inefficient since if one processor updates (fx,fy)
+	there is going to be coherence traffic between the processors because of the 
+	false sharing.
+
+	One idea is to compute interactions between a given particle with many other
+	particles simultaneously.
