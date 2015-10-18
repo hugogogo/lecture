@@ -13,10 +13,16 @@
        number of processors (p), time per trial (t_trial), 
        and time to update the global counters in the critical 
        section (t_update).
+	
+	A:	computation = N * t_trial / p
+		synchronization = N * t_update / B
+		total = computation + synchronization
 
     b) Run the code with a few different parameter values in order
        to estimate N, t_trial, and t_update for this code on
        a totient compute node.
+	
+	A:	
 
     c) Based on your model, suggest a strategy for choosing the batch
        size.  How might you generalize this strategy to automatically
@@ -27,3 +33,5 @@
     queue implementation.  Following the strategy outlined in the
     slides, add synchronization calls in the locations marked TODO.
     You should run the code to make sure it behaves as expected!
+	
+	A: 
