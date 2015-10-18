@@ -12,6 +12,10 @@
        terms of the number of trials (N), number of processors (p),
        time per trial (t_trial), and time to update the global
        counters in the critical section (t_update).
+	
+	A:	computation = N * t_trial / p
+		communication = t_update 
+		total = computation + communication = N * t_trial / p + t_update 
 
     b) Run the code with a few different parameter values in order
        to estimate N, t_trial, and t_update for this code on
@@ -21,6 +25,11 @@
        size.  How might you generalize this strategy to automatically
        choose batch sizes for different types of computational
        experiments?
+
+	A:	The general idea would be to increase batch size with the number of 
+	processors since large batch size is good to amortize communication cost.
+	But we cannot always choose as large as we want since too big a batch size
+	means higher computational cost.
 
 3.  The "OpenMP pitfalls" paper describes some common pitfalls (both
     performance and correctness) in OpenMP codes.  Go through the
